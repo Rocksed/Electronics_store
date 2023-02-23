@@ -28,4 +28,4 @@ print(item2.calculate_total_price())
 print(item1.apply_discount(0.8))
 print(item2.price)
 
-print(len(Item.products))
+print(Item.products)
