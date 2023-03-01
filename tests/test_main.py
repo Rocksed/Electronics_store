@@ -28,3 +28,25 @@ class TestItem:
         assert Item.price_level == 1
         Item.price_level = 0.9
         assert Item.price_level == 0.9
+
+    # test setting product name with property
+    item = Item('Смартфон', 10000, 5)
+    item.name = 'Смартфон'
+    assert item.name == 'Смартфон'
+
+    # test raising exception when product name is too long
+    try:
+        item.name = 'СуперСмартфон'
+    except Exception as e:
+        assert str(e) == "Длина наименования товара превышает 10 символов."
+
+    # test creating instances from csv file
+    Item.instantiate_from_csv()
+    assert len(Item.all) == 5
+    item1 = Item.all[0]
+    assert item1.name == 'Смартфон'
+
+    # test is_integer static method
+    assert Item.is_integer(5) == True
+    assert Item.is_integer(5.0) == True
+    assert Item.is_integer(5.5) == False

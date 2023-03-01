@@ -1,15 +1,30 @@
+﻿import csv
+
+
 class Item:
     # class attributes
     price_level = 1  # default is no discount
     products = []
+    all = []
 
     def __init__(self, name, price, quantity):
         # instance attributes
-        self.name = name
+        self._name = name
         self.price = price
         self.quantity = quantity
         # add instance to class attribute
         Item.products.append(self)
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if int(len(value)) > 10:
+            raise Exception("Длина наименования товара превышает 10 символов.")
+        else:
+            self._name = value
 
     def calculate_total_price(self):
         return self.price * self.quantity * Item.price_level
@@ -17,15 +32,35 @@ class Item:
     def apply_discount(self, discount):
         return float(self.price * discount)
 
+    @classmethod
+    def instantiate_from_csv(cls):
+        with open('../items.csv', encoding='utf8', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                name = row['name']
+                price = float(row['price'])
+                quantity = int(row['quantity'])
+                item = Item(name, price, quantity)
+                Item.all.append(item)
 
-item1 = Item("Смартфон", 10000, 20)
-item2 = Item("Ноутбук", 20000, 5)
+    @staticmethod
+    def is_integer(num):
+        if num == int(num):
+            return True
+        else:
+            return False
 
-print(item1.calculate_total_price())
-print(item2.calculate_total_price())
 
-# set a new price level
-print(item1.apply_discount(0.8))
-print(item2.price)
+item = Item('Телефон', 10000, 5)
+item.name = 'Смартфон'
+print(item.name)
 
-print(Item.products)
+Item.instantiate_from_csv()  # create objects from file data
+print(len(Item.all))  # there are 5 items in the file
+
+item1 = Item.all[0]
+print(item1.name)
+
+print(Item.is_integer(5))
+print(Item.is_integer(5.0))
+print(Item.is_integer(5.5))
