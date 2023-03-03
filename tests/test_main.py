@@ -50,3 +50,13 @@ class TestItem:
     assert Item.is_integer(5) == True
     assert Item.is_integer(5.0) == True
     assert Item.is_integer(5.5) == False
+
+    def test_item_representation(self):
+        item1 = Item("Smartphone", 10000, 20)
+        assert str(item1) == "Smartphone"
+        assert repr(item1) == "Item('Smartphone', 10000, 20)"
+
+        item2 = Item("Laptop", 50000, 10)
+        assert str(item2) == "Laptop"
+        assert repr(item2) == "Item('Laptop', 50000, 10)"
+
