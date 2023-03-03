@@ -50,17 +50,13 @@ class Item:
         else:
             return False
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity})"
 
-item = Item('Телефон', 10000, 5)
-item.name = 'Смартфон'
-print(item.name)
+    def __str__(self):
+        return self.name
 
-Item.instantiate_from_csv()  # create objects from file data
-print(len(Item.all))  # there are 5 items in the file
 
-item1 = Item.all[0]
-print(item1.name)
-
-print(Item.is_integer(5))
-print(Item.is_integer(5.0))
-print(Item.is_integer(5.5))
+item1 = Item("Смартфон", 10000, 20)
+Item('Смартфон', 10000, 20)
+print(item1)
