@@ -13,7 +13,7 @@ class Item:
         self.price = price
         self.quantity = quantity
         # add instance to class attribute
-        self.__class__.products.append(self)
+        Item.products.append(self)
 
     @property
     def name(self):
@@ -27,13 +27,13 @@ class Item:
             self._name = value
 
     def calculate_total_price(self):
-        return self.price * self.quantity * self.__class__.price_level
+        return self.price * self.quantity * Item.price_level
 
     def apply_discount(self, discount):
         return float(self.price * discount)
 
     @classmethod
-    def instantiate_from_csv(cls):
+    def instantiate_from_fcsv(cls):
         with open('../items.csv', encoding='utf8', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
@@ -41,7 +41,7 @@ class Item:
                 price = float(row['price'])
                 quantity = int(row['quantity'])
                 item = Item(name, price, quantity)
-                cls.all.append(item)
+                Item.all.append(item)
 
     @staticmethod
     def is_integer(num):
@@ -56,39 +56,39 @@ class Item:
     def __str__(self):
         return self.name
 
+    def __add__(self, other):
+        if isinstance(other, Item):
+            new_item = Item(self.name, self.price, self.quantity + other.quantity)
+            return new_item
+        elif isinstance(other, Phone):
+            new_phone = Phone(self.name, self.price, self.quantity + other.quantity, self.number_of_sim)
+            return new_phone
+        else:
+            raise TypeError("Cannot add instances of different classes.")
+
 
 class Phone(Item):
     def __init__(self, name, price, quantity, number_of_sim):
         super().__init__(name, price, quantity)
-        self.number_of_sim = number_of_sim
+        self._number_of_sim = number_of_sim
+
+    @property
+    def number_of_sim(self):
+        return self._number_of_sim
+
+    @number_of_sim.setter
+    def number_of_sim(self, value):
+        if not Item.is_integer(value) or int(value) <= 0:
+            raise ValueError("Number of physical SIM cards must be integer greater than zero.")
+        else:
+            self._number_of_sim = int(value)
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity}, {self.number_of_sim})"
 
-    def __str__(self):
-        return self.name
-
-
-class Inventory:
-    def __init__(self):
-        self.stock = {}
-
-    def add_item(self, item):
-        if isinstance(item, Item):
-            self.stock[item] = self.stock.get(item, 0) + 1
-        else:
-            raise TypeError("Only instances of Item class can be added to the inventory.")
-
-    def add_phone(self, phone):
-        if isinstance(phone, Phone):
-            self.stock[phone] = self.stock.get(phone, 0) + 1
-        else:
-            raise TypeError("Only instances of Phone class can be added to the inventory.")
-
 
 phone1 = Phone("iPhone 14", 120_000, 5, 2)
 print(phone1)
-
 print(repr(phone1))
 Phone('iPhone 14', 120000, 5, 2)
-phone1.number_of_sim = 0
+#phone1.number_of_sim = 0
