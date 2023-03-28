@@ -1,4 +1,5 @@
 ﻿import csv
+import os
 
 
 class Item:
@@ -31,6 +32,7 @@ class Item:
 
     def apply_discount(self, discount):
         return float(self.price * discount)
+
 
     @classmethod
     def instantiate_from_fcsv(cls):
@@ -87,8 +89,29 @@ class Phone(Item):
         return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity}, {self.number_of_sim})"
 
 
-phone1 = Phone("iPhone 14", 120_000, 5, 2)
-print(phone1)
-print(repr(phone1))
-Phone('iPhone 14', 120000, 5, 2)
-#phone1.number_of_sim = 0
+class Keyboard(Item):
+    def __init__(self, name, price, quantity, language='EN'):
+        super().__init__(name, price, quantity)
+        self._language = language
+
+    @property
+    def language(self):
+        return self._language
+
+    def change_lang(self):
+        self._language = 'RU' if self._language == 'EN' else 'EN'
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity}, '{self.language}')"
+
+    def __str__(self):
+        return self.name
+
+
+kb = Keyboard('Dark Project KD87A', 9600, 5)
+print(kb)
+print(kb.language)
+kb.change_lang()
+print(kb.language)
+kb.language = 'CH'
+
