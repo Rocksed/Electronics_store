@@ -1,5 +1,5 @@
 import pytest
-from project.main import Item, Phone, Keyboard
+from project.main import Item, Phone, Keyboard, LanguageAddOn
 
 
 def test_item_instantiation():
@@ -30,7 +30,7 @@ def test_item_apply_discount():
 
 def test_item_instantiate_from_csv():
     Item.instantiate_from_fcsv()
-    assert len(Item.all) == 4
+    assert len(Item.all) == 5
 
 
 def test_phone_instantiation():
@@ -49,18 +49,32 @@ def test_phone_number_of_sim_setter():
         phone2.number_of_sim = "2"
 
 
-def test_keyboard_instantiation():
-    keyboard1 = Keyboard("Logitech", 50, 3, "EN")
-    assert keyboard1.name == "Logitech"
-    assert keyboard1.price == 50
-    assert keyboard1.quantity == 3
-    assert keyboard1.language == "EN"
+class TestKeyboard:
+    def test_initialization(self):
+        kb = Keyboard('Dark Project KD87A', 9600, 5)
+        assert kb.name == 'Dark Project KD87A'
+        assert kb.price == 9600
+        assert kb.quantity == 5
+        assert kb.language == 'EN'
 
+    def test_change_language(self):
+        kb = Keyboard('Dark Project KD87A', 9600, 5)
+        assert kb.language == 'EN'
+        kb.change_lang()
+        assert kb.language == 'RU'
+        kb.change_lang()
+        assert kb.language == 'EN'
 
-def test_keyboard_change_lang():
-    keyboard2 = Keyboard("Microsoft", 70, 1, "EN")
-    keyboard2.change_lang()
-    assert keyboard2.language == "RU"
-    keyboard2.change_lang()
-    assert keyboard2.language == "EN"
+    def test_string_representation(self):
+        kb = Keyboard('Dark Project KD87A', 9600, 5)
+        assert str(kb) == 'Dark Project KD87A'
 
+    def test_repr_representation(self):
+        kb = Keyboard('Dark Project KD87A', 9600, 5)
+        assert repr(kb) == "Keyboard('Dark Project KD87A', 9600, 5, 'EN')"
+
+    def test_inheritance(self):
+        kb = Keyboard('Dark Project KD87A', 9600, 5)
+        assert isinstance(kb, Keyboard)
+        assert isinstance(kb, Item)
+        assert isinstance(kb, LanguageAddOn)

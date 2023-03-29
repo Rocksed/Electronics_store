@@ -33,7 +33,6 @@ class Item:
     def apply_discount(self, discount):
         return float(self.price * discount)
 
-
     @classmethod
     def instantiate_from_fcsv(cls):
         with open('../items.csv', encoding='utf8', newline='') as csvfile:
@@ -89,9 +88,8 @@ class Phone(Item):
         return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity}, {self.number_of_sim})"
 
 
-class Keyboard(Item):
-    def __init__(self, name, price, quantity, language='EN'):
-        super().__init__(name, price, quantity)
+class LanguageAddOn:
+    def __init__(self, language='EN'):
         self._language = language
 
     @property
@@ -100,6 +98,12 @@ class Keyboard(Item):
 
     def change_lang(self):
         self._language = 'RU' if self._language == 'EN' else 'EN'
+
+
+class Keyboard(Item, LanguageAddOn):
+    def __init__(self, name, price, quantity, language='EN'):
+        super().__init__(name, price, quantity)
+        LanguageAddOn.__init__(self, language)
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity}, '{self.language}')"
@@ -113,5 +117,4 @@ print(kb)
 print(kb.language)
 kb.change_lang()
 print(kb.language)
-kb.language = 'CH'
-
+#kb.language = 'CH'
