@@ -1,5 +1,6 @@
 import pytest
-from project.main import Item, Phone, Keyboard, LanguageAddOn
+from project.main import Item, Phone, Keyboard, LanguageAddOn, InstantiateCSVError
+import csv
 
 
 def test_item_instantiation():
@@ -28,9 +29,24 @@ def test_item_apply_discount():
     assert item4.apply_discount(0.2) == 40.0
 
 
+@pytest.fixture
+def item():
+    return Item('test', 1.0, 1)
+
+
+def test_item_instantiate_from_csv_missing_file():
+    with pytest.raises(FileNotFoundError, match="The item.csv file is missing"):
+        Item.instantiate_from_csv('missing.csv')
+
+
+def test_item_instantiate_from_csv_damaged_file():
+    with pytest.raises(InstantiateCSVError, match="The item.csv file is damaged"):
+        Item.instantiate_from_csv('tests/damaged_items.csv')
+
+
 def test_item_instantiate_from_csv():
-    Item.instantiate_from_fcsv()
-    assert len(Item.all) == 5
+    Item.instantiate_from_csv('/project/items.csv')
+    assert len(Item.all()) == 2
 
 
 def test_phone_instantiation():
