@@ -2,6 +2,10 @@
 import os
 
 
+class InstantiateCSVError(Exception):
+    pass
+
+
 class Item:
     # class attributes
     price_level = 1  # default is no discount
@@ -34,15 +38,20 @@ class Item:
         return float(self.price * discount)
 
     @classmethod
-    def instantiate_from_fcsv(cls):
-        with open('../items.csv', encoding='utf8', newline='') as csvfile:
+    def instantiate_from_csv(cls, items):
+        with open('/project/items.csv', encoding='utf8', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                name = row['name']
-                price = float(row['price'])
-                quantity = int(row['quantity'])
-                item = Item(name, price, quantity)
-                Item.all.append(item)
+                try:
+                    name = row['name']
+                    price = float(row['price'])
+                    quantity = int(row['quantity'])
+                except KeyError:
+                    raise InstantiateCSVError("The item.csv file is damaged.")
+                except FileNotFoundError:
+                    raise FileNotFoundError("The item.csv file is missing")
+        item = Item(name, price, quantity)
+        Item.all.append(item)
 
     @staticmethod
     def is_integer(num):
@@ -112,9 +121,4 @@ class Keyboard(Item, LanguageAddOn):
         return self.name
 
 
-kb = Keyboard('Dark Project KD87A', 9600, 5)
-print(kb)
-print(kb.language)
-kb.change_lang()
-print(kb.language)
-#kb.language = 'CH'
+print(Item.all)
