@@ -10,7 +10,6 @@ class Item:
     # class attributes
     price_level = 1  # default is no discount
     products = []
-    all = []
 
     def __init__(self, name, price, quantity):
         # attributes instance
@@ -38,20 +37,22 @@ class Item:
         return float(self.price * discount)
 
     @classmethod
-    def instantiate_from_csv(cls, items):
-        with open('/project/items.csv', encoding='utf8', newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
+    def instantiate_from_csv(cls, filename: str = 'items.csv'):
+        items: list = []
+        with open(filename, mode='r', encoding='utf-8') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            for row in csv_reader:
                 try:
-                    name = row['name']
-                    price = float(row['price'])
-                    quantity = int(row['quantity'])
-                except KeyError:
-                    raise InstantiateCSVError("The item.csv file is damaged.")
-                except FileNotFoundError:
-                    raise FileNotFoundError("The item.csv file is missing")
-        item = Item(name, price, quantity)
-        Item.all.append(item)
+                    item = cls(
+                        name=row['name'],
+                        price=float(row['price']),
+                        quantity=int(row['quantity'])
+                    )
+                    items.append(item)
+                except ValueError as e:
+                    raise InstantiateCSVError(f"Error instantiating item from csv: {e}")
+
+        return items
 
     @staticmethod
     def is_integer(num):
@@ -121,4 +122,4 @@ class Keyboard(Item, LanguageAddOn):
         return self.name
 
 
-print(Item.all)
+print(Item.instantiate_from_csv())

@@ -34,19 +34,34 @@ def item():
     return Item('test', 1.0, 1)
 
 
-def test_item_instantiate_from_csv_missing_file():
-    with pytest.raises(FileNotFoundError, match="The item.csv file is missing"):
-        Item.instantiate_from_csv('missing.csv')
+def test_instantiate_from_csv_success(self, tmp_path):
+    # Create a temporary csv file with data
+    csv_data = "name,price,quantity\nitem1,10.0,5\nitem2,20.0,3\n"
+    csv_file = tmp_path / "items.csv"
+    csv_file.write_text(csv_data)
+
+    # Instantiate items from the csv file
+    items = Item.instantiate_from_csv(str(csv_file))
+
+    # Check that the items are instantiated correctly
+    assert len(items) == 2
+    assert items[0].name == "item1"
+    assert items[0].price == 10.0
+    assert items[0].quantity == 5
+    assert items[1].name == "item2"
+    assert items[1].price == 20.0
+    assert items[1].quantity == 3
 
 
-def test_item_instantiate_from_csv_damaged_file():
-    with pytest.raises(InstantiateCSVError, match="The item.csv file is damaged"):
-        Item.instantiate_from_csv('tests/damaged_items.csv')
+def test_instantiate_from_csv_error(self, tmp_path):
+    # Create a temporary csv file with invalid data
+    csv_data = "name,price,quantity\nitem1,10.0,5\nitem2,20.0,invalid\n"
+    csv_file = tmp_path / "items.csv"
+    csv_file.write_text(csv_data)
 
-
-def test_item_instantiate_from_csv():
-    Item.instantiate_from_csv('/project/items.csv')
-    assert len(Item.all()) == 2
+    # Check that the InstantiateCSVError is raised when invalid data is encountered
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv(str(csv_file))
 
 
 def test_phone_instantiation():
